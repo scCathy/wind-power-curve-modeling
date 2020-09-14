@@ -12,7 +12,8 @@ import numpy as np
 #import math
 #from matplotlib.colors import LinearSegmentedColormap
 import os
-import denoise
+#import denoise
+import svmxunlian
 import tezhengliangtiqu
 #from scipy import signal
 from pylab import *
@@ -29,8 +30,8 @@ def get_filelist(dirr,name_list):
             name_list['mosun'].append(dirr)
         elif os.path.split(os.path.dirname(dirr))[1] == "dianshi":
             name_list['dianshi'].append(dirr)
-        elif os.path.split(os.path.dirname(dirr))[1] == "dianmo":
-            name_list['dianmo'].append(dirr)
+        #elif os.path.split(os.path.dirname(dirr))[1] == "dianmo":
+            #name_list['dianmo'].append(dirr)
         elif os.path.split(os.path.dirname(dirr))[1] == "normal":
             name_list['normal'].append(dirr)
     elif os.path.isdir(dirr):
@@ -42,11 +43,11 @@ def get_filelist(dirr,name_list):
     return name_list
 
 path = 'G:/wind-energy/gear-box/faults-data/gear-fault-data-set-1/'
-name_list={'normal':[],'dianshi':[],'dianmo':[],'mosun':[],'duanchi':[]}
+name_list={'normal':[],'dianshi':[],'mosun':[],'duanchi':[]}#'dianmo':[],
 name_list = get_filelist(path, name_list)
-value={'normal':[],'dianshi':[],'dianmo':[],'mosun':[],'duanchi':[]}
+value={'normal':[],'dianshi':[],'mosun':[],'duanchi':[]}#'dianmo':[],
 dlist=list(value.keys())
-for i in range(5):
+for i in range(4):
     jian=dlist[i]#索引值即为字符
     for j in range(len(name_list[jian])):
         file_name = (os.path.basename(name_list[jian][j])).split('.')[0]
@@ -70,7 +71,42 @@ def fuliye(xinhao):
     return frq,Y
 '''
 #df_news = pd.read_table(r'G:\wind-energy\gear-box\faults-data\gear-fault-data-set-1\mosun\mosun880.txt',header = None,usecols = range(9))
+name=['normal','dianshi','mosun','duanchi']#,'dianmo'
+length=[len(value[name[0]]),len(value[name[1]]),len(value[name[2]]),len(value[name[3]])]#,len(value[name[4]]
+sampledata=[]#样本库
+for i in range(len(value)):
+    for j in range(length[i]):
+        for z in range(8,9):#只用了通道8的信号
+            xinhao=value[name[i]][str(j)][z].tolist() #循环取通道信号
+            te1=tezhengliangtiqu.tezhengti(xinhao) #某一通道信号的特征量提取
+            te1=np.append(te1,int(i))#i为标签，0-4与name对应
+            if not len(sampledata):
+                sampledata=[te1.tolist()]
+            else:
+                sampledata=np.concatenate((sampledata,[te1.tolist()]),axis=0)
 
+#相关度计算
+from pandas.core.frame import DataFrame
+samp=DataFrame(sampledata[:,0:-1])
+print(samp.corr())
+samp.corr().to_excel('test1.xlsx', index=True, header=None)
+
+markers=('s','x','o','^','v')
+colors=('red','blue','lightgreen','gray','cyan')
+i=2
+for idx,c1 in enumerate(np.unique(y)):
+    tezheng1=sampledata[sampledata[:,-1]==c1,0]
+    plt.plot(range(len(tezheng1)),tezheng1,alpha=0.8,c=colors[idx],marker=markers[idx],label=c1)
+plt.legend(['normal','dianshi','mosun','duanchi'],loc='best')
+plt.show()
+
+plt.scatter(range,sampledata[:,0])
+
+svmxunlian.svmxunlian(sampledata,length)
+            
+            
+            
+        
 zhuansu=value['normal']['0'][0].tolist() #转速
 dx_in=value['normal']['0'][1].tolist()
 dy_in=value['normal']['0'][2].tolist()
@@ -87,6 +123,7 @@ zhuansu_real=880
 changdu=len(zhuansu)
 t=np.arange(0,changdu,1)*T
 tezheng=tezhengliangtiqu.tezhengti(ax_lout_mv)
+
 '''
 #绘制原始振动信号的图
 fig, ax = plt.subplots(8, 1, figsize=(12,12))
