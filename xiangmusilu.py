@@ -104,25 +104,13 @@ plt.scatter(range,sampledata[:,0])
 
 svmxunlian.svmxunlian(sampledata,length)
             
-            
-            
-        
-zhuansu=value['normal']['0'][0].tolist() #转速
-dx_in=value['normal']['0'][1].tolist()
-dy_in=value['normal']['0'][2].tolist()
-ay_gin=value['normal']['0'][3].tolist()
-ay_gout=value['normal']['0'][4].tolist()
-ay_lin=value['normal']['0'][5].tolist()
-ay_lout=value['normal']['0'][6].tolist()
-ax_lout=value['normal']['0'][7].tolist()
-ax_lout_mv=value['normal']['0'][8].tolist()
 
+    
 f=2000*2.56 #Hz,采样频率
 T=1/f
 zhuansu_real=880
 changdu=len(zhuansu)
 t=np.arange(0,changdu,1)*T
-tezheng=tezhengliangtiqu.tezhengti(ax_lout_mv)
 
 '''
 #绘制原始振动信号的图
