@@ -72,7 +72,7 @@ def tezhengti (dataa):
         p=energy[i]/np.sum(energy)
         Hwp=Hwp+p*np.log(p)
     Hwp=-1*Hwp
-    tezheng=[Vmax,Vpp,Vc,Vcabs,Vrms,sigma,alfa,beta,Kv,Sf,Cf,CLf,If,Hf,Hwp]
+    tezheng=[Hf,Hwp,Vpp,sigma,Vc,Vmax]#Kv,Vcabs,beta,Sf,Cf,CLf,Vrms,alfa,If
     return tezheng
     '''
     能量图绘制
@@ -93,5 +93,3 @@ def tezhengti (dataa):
     plt.xticks(index, ('1', '2', '3', '4', '5', '6', '7', '8'))
     plt.show()
     '''
-    
-    
